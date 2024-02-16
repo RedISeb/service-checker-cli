@@ -1,3 +1,3 @@
-module serive-checker-cli
+module service-checker-cli
 
 go 1.20
