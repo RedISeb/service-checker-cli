@@ -8,21 +8,21 @@ import (
 	"runtime"
 )
 
-var Port string = "80"
-
 func main() {
 	hostPointer := flag.String("host", "localhost", "Hostname or IP address where the service runs")
+	portPointer := flag.String("port", "80", "TCP port the service runs on")
 	flag.Parse()
 	host := *hostPointer
+	port := *portPointer
 	fmt.Printf("Check the host: %s\n", host)
 	isAlive := pingHost(host)
-	fmt.Printf("%s is up and running \n", host)
 	if isAlive {
+		fmt.Printf("%s is up and running \n", host)
 		var osSystem string = getSystemInfo()
 		switch osSystem {
 		case "darwin":
 			log.Println("Mac OS")
-			outputDialogTCP(Port, checkTcpPortUnix(host, Port))
+			outputDialogTCP(port, checkTcpPortUnix(host, port))
 
 		case "linux":
 			log.Println("Linux")
