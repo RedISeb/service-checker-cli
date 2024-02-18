@@ -1,0 +1,9 @@
+{
+  "services": [
+    {
+      "name": "default",
+      "host": "192.168.0.8",
+      "port": "80"
+    }
+  ]
+}
