@@ -15,16 +15,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Services struct {
-	Services []Service `json:"services"`
-}
-
-type Service struct {
-	Name string `json:"name"`
-	Host string `json:"host"`
-	Port string `json:"port"`
-}
-
 // monitorCmd represents the monitor command
 var monitorCmd = &cobra.Command{
 	Use:   "monitor",
