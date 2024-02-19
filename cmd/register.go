@@ -14,16 +14,21 @@ import (
 // registerCmd represents the register command
 var registerCmd = &cobra.Command{
 	Use:   "register",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Register lets you add a new service to be monitored.",
+	Long: `Register adds new services to the default.json config file.
+Everything that is registered in default.json can be monitored using the monitor command.
+The host flag is mandatory, whereas name defaults to the host and the port to 80 if left blank.
+Usage:
+service-checker-cli register --host localhost --name localhost --port 443
+or
+service-checker-cli register -H localhost -n localhost -p 443
+`,
 	Run: func(cmd *cobra.Command, args []string) {
-		name, _ := cmd.Flags().GetString("name")
 		host, _ := cmd.Flags().GetString("host")
+		name, _ := cmd.Flags().GetString("name")
+		if name == "" {
+			name = host
+		}
 		port, _ := cmd.Flags().GetString("port")
 
 		newService := Service{}
@@ -48,19 +53,8 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(registerCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// registerCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// registerCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	registerCmd.PersistentFlags().StringP("host", "H", "localhost", "Hostname or ip address of the service.")
 	registerCmd.MarkPersistentFlagRequired("host")
-	host, _ := registerCmd.Flags().GetString("host")
-	registerCmd.PersistentFlags().StringP("name", "n", host, "Name for the registered service.")
+	registerCmd.PersistentFlags().StringP("name", "n", "", "Name for the registered service.")
 	registerCmd.PersistentFlags().StringP("port", "p", "80", "Specify the TCP port of the registered service.")
 }
