@@ -36,7 +36,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		services := readDefaultConfig()
+		services := ReadDefaultConfig()
 		for _, service := range services.Services {
 			isAlive := pingHost(service.Host)
 			if isAlive {
@@ -72,7 +72,7 @@ func init() {
 	// monitorCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-func readDefaultConfig() Services {
+func ReadDefaultConfig() Services {
 	data, err := os.Open("./config/default.json")
 	if err != nil {
 		log.Fatalln(err.Error())
