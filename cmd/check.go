@@ -20,20 +20,28 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("check called")
+		host, _ := cmd.Flags().GetString("host")
+		port, _ := cmd.Flags().GetString("port")
+		os := GetSystemInfo()
+		isHostAlive := PingHost(host)
+		if isHostAlive {
+			switch os {
+			case "darwin", "linux":
+				isPortAlive := CheckTcpPortUnix(host, port)
+				OutputDialogTCP(port, isPortAlive)
+			case "windows":
+				fmt.Println("To be implemented")
+			}
+		} else {
+			fmt.Printf("Host %s is down", host)
+		}
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(checkCmd)
-	checkCmd.Flags().BoolP("host", "H", false, "Hostname of the system you want to check")
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// checkCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// checkCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	checkCmd.PersistentFlags().StringP("host", "H", "localhost", "Hostname of the system you want to check")
+	checkCmd.PersistentFlags().StringP("port", "p", "80", "Specify the TCP port of the service.")
+	checkCmd.MarkPersistentFlagRequired("host")
 }

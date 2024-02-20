@@ -28,13 +28,13 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		services := ReadDefaultConfig()
 		for _, service := range services.Services {
-			isAlive := pingHost(service.Host)
+			isAlive := PingHost(service.Host)
 			if isAlive {
 				fmt.Printf("%s is up and running \n", service.Host)
-				var osSystem string = getSystemInfo()
+				var osSystem string = GetSystemInfo()
 				switch osSystem {
 				case "darwin":
-					outputDialogTCP(service.Port, checkTcpPortUnix(service.Host, service.Port))
+					OutputDialogTCP(service.Port, CheckTcpPortUnix(service.Host, service.Port))
 
 				case "linux":
 					log.Println("Linux")
@@ -76,7 +76,7 @@ func ReadDefaultConfig() Services {
 	return services
 }
 
-func pingHost(hostname string) bool {
+func PingHost(hostname string) bool {
 	app := "ping"
 	arg1 := "-c"
 	arg2 := "1"
@@ -87,7 +87,7 @@ func pingHost(hostname string) bool {
 	return err == nil
 }
 
-func checkTcpPortUnix(hostname string, port string) bool {
+func CheckTcpPortUnix(hostname string, port string) bool {
 	app := "nc"
 	arg1 := "-vz"
 	arg2 := hostname
@@ -98,7 +98,7 @@ func checkTcpPortUnix(hostname string, port string) bool {
 	return err == nil
 }
 
-func outputDialogTCP(port string, isOpenTCP bool) {
+func OutputDialogTCP(port string, isOpenTCP bool) {
 	switch isOpenTCP {
 	case true:
 		fmt.Printf("Service on port %s is running.\n", port)
@@ -107,7 +107,7 @@ func outputDialogTCP(port string, isOpenTCP bool) {
 	}
 }
 
-func getSystemInfo() string {
+func GetSystemInfo() string {
 	os := runtime.GOOS
 	return os
 }
