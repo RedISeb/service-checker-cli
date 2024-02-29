@@ -22,13 +22,16 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetString("port")
+		s := &Service{Name: host, Host: host, Port: port, IsRunning: false}
+		observer := MyObserver{}
+		s.RegisterObserver(observer)
 		os := GetSystemInfo()
 		isHostAlive := PingHost(host)
 		if isHostAlive {
 			switch os {
 			case "darwin", "linux":
-				isPortAlive := CheckTcpPortUnix(host, port)
-				OutputDialogTCP(port, isPortAlive)
+				s.CheckTcpPortUnix()
+				s.OutputDialogTCP()
 			case "windows":
 				fmt.Println("To be implemented")
 			}

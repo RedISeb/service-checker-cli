@@ -4,13 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"os"
-	"os/exec"
-	"runtime"
 
 	"github.com/spf13/cobra"
 )
@@ -31,13 +26,14 @@ to quickly create a Cobra application.`,
 			isAlive := PingHost(service.Host)
 			if isAlive {
 				fmt.Printf("%s is up and running \n", service.Host)
+				service.CheckTcpPortUnix()
 				var osSystem string = GetSystemInfo()
 				switch osSystem {
 				case "darwin":
-					OutputDialogTCP(service.Port, CheckTcpPortUnix(service.Host, service.Port))
-
+					service.OutputDialogTCP()
 				case "linux":
 					log.Println("Linux")
+					service.OutputDialogTCP()
 				default:
 					fmt.Printf("%s.\n", osSystem)
 				}
@@ -50,64 +46,5 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(monitorCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// monitorCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// monitorCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-func ReadDefaultConfig() Services {
-	data, err := os.Open("./config/default.json")
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
-	defer data.Close()
-
-	byteValue, _ := io.ReadAll(io.Reader(data))
-	var services Services
-	json.Unmarshal(byteValue, &services)
-
-	return services
-}
-
-func PingHost(hostname string) bool {
-	app := "ping"
-	arg1 := "-c"
-	arg2 := "1"
-	arg3 := hostname
-
-	execPing := exec.Command(app, arg1, arg2, arg3)
-	_, err := execPing.Output()
-	return err == nil
-}
-
-func CheckTcpPortUnix(hostname string, port string) bool {
-	app := "nc"
-	arg1 := "-vz"
-	arg2 := hostname
-	arg3 := port
-
-	execTest := exec.Command(app, arg1, arg2, string(arg3))
-	_, err := execTest.Output()
-	return err == nil
-}
-
-func OutputDialogTCP(port string, isOpenTCP bool) {
-	switch isOpenTCP {
-	case true:
-		fmt.Printf("Service on port %s is running.\n", port)
-	case false:
-		fmt.Printf("Service on port %s is down.\n", port)
-	}
-}
-
-func GetSystemInfo() string {
-	os := runtime.GOOS
-	return os
+	monitorCmd.Flags().BoolP("notify", "n", false, "Toggle system notification if status of service is changing.")
 }
