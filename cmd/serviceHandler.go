@@ -9,6 +9,7 @@ type Service struct {
 	Host      string `json:"host"`
 	Port      string `json:"port"`
 	IsRunning bool
+	IsNotify  bool
 	observers []Observer
 }
 
@@ -18,7 +19,7 @@ func (s *Service) RegisterObserver(observer Observer) {
 
 func (s *Service) notifyObservers() {
 	for _, observer := range s.observers {
-		observer.Notify(s.Name, s.IsRunning)
+		observer.Notify(s.Name, s.IsRunning, s.IsNotify)
 	}
 }
 

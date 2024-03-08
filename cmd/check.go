@@ -22,7 +22,8 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetString("port")
-		s := &Service{Name: host, Host: host, Port: port, IsRunning: false}
+		isNotify, _ := cmd.Flags().GetBool("notify")
+		s := &Service{Name: host, Host: host, Port: port, IsRunning: false, IsNotify: isNotify}
 		observer := MyObserver{}
 		s.RegisterObserver(observer)
 		os := GetSystemInfo()
@@ -44,6 +45,7 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(checkCmd)
+	checkCmd.Flags().BoolP("notify", "n", false, "Toggle system notification if status of service is changing.")
 	checkCmd.PersistentFlags().StringP("host", "H", "localhost", "Hostname of the system you want to check")
 	checkCmd.PersistentFlags().StringP("port", "p", "80", "Specify the TCP port of the service.")
 	checkCmd.MarkPersistentFlagRequired("host")
